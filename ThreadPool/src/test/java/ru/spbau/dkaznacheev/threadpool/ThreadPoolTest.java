@@ -43,9 +43,10 @@ public class ThreadPoolTest {
     @Test (expected = LightFutureException.class)
     public void threadPoolThrowsTest() throws Exception {
         ThreadPool pool = new ThreadPoolImpl(4);
-        pool.addTask(() -> {
+        LightFuture<Integer> future = pool.addTask(() -> {
             throw new RuntimeException();
         });
+        future.get();
     }
 
     @Test
