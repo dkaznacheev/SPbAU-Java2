@@ -8,7 +8,6 @@ import java.util.function.Supplier;
  * Class for creating Lazy instances.
  */
 public class LazyFactory {
-
     /**
      * Creates non-thread-safe Lazy instance.
      * @param supplier supplier for Lazy
@@ -17,13 +16,14 @@ public class LazyFactory {
      */
     public static <T> Lazy<T> createSingleThreadLazy(@NotNull Supplier<T> supplier) {
         return new Lazy<T>() {
+            private Supplier<T> lazySupplier = supplier;
             private T result;
             private boolean counted = false;
             @Override
             public T get() {
                 if (!counted) {
                     counted = true;
-                    result = supplier.get();
+                    result = lazySupplier.get();
                 }
                 return result;
             }
