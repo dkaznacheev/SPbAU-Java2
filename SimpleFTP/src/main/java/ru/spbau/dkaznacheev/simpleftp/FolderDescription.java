@@ -5,9 +5,24 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Class describing folder contents.
+ */
 public class FolderDescription {
+
+    /**
+     * Class describing one file.
+     */
     private static class FileDescription {
+
+        /**
+         * Filename.
+         */
         public String name;
+
+        /**
+         * Whether a file is a directory or not.
+         */
         public boolean isDir;
 
         public FileDescription(String name, boolean isDir) {
@@ -16,12 +31,23 @@ public class FolderDescription {
         }
     }
 
+    /**
+     * Size of the folder.
+     */
     private int size;
+
+    /**
+     * Description of folder's contents.
+     */
     private FileDescription[] files;
 
+    /**
+     * Writes FolderDescription to DataOutputStream.
+     * @param out stream to write to
+     */
     public void write(DataOutputStream out) throws IOException {
         out.writeInt(size);
-        if (size == -1) {
+        if (size == 0) {
             return;
         }
         for (FileDescription description : files) {
@@ -30,9 +56,12 @@ public class FolderDescription {
         }
     }
 
+    /**
+     * Prints FolderDescription to console.
+     */
     public void print() {
-        if (size == -1) {
-            System.out.println("Not a folder");
+        if (size == 0) {
+            System.out.println("Folder not found");
             return;
         }
         System.out.println(size + " files:");
@@ -46,10 +75,15 @@ public class FolderDescription {
         System.out.println();
     }
 
+    /**
+     * Reads FolderDescription from InputStream.
+     * @param in input stream
+     * @return read FolderDescription
+     */
     public static FolderDescription read(DataInputStream in) throws IOException {
         FolderDescription description = new FolderDescription();
         description.size = in.readInt();
-        if (description.size == -1) {
+        if (description.size == 0) {
             return description;
         }
         description.files = new FileDescription[description.size];
@@ -62,18 +96,24 @@ public class FolderDescription {
         return description;
     }
 
+    /**
+     * Returns a FolderDescription from path to folder.
+     * If it is the path of non-folder file, returns a FolderDescription with size = 0.
+     * @param path path to file/folder
+     * @return FolderDescription on this path
+     */
     public static FolderDescription describeFolder(String path) {
         File root = new File(path);
         FolderDescription result = new FolderDescription();
 
         File[] contents = root.listFiles();
         if (contents == null) {
-            result.size = -1;
+            result.size = 0;
             return result;
         }
 
         result.files = new FileDescription[contents.length];
-
+        result.size = contents.length;
         for (int i = 0; i < contents.length; i++) {
             String name = contents[i].getName();
             boolean isDir = contents[i].isDirectory();

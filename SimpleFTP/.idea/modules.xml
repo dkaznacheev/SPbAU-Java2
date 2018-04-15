@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FTPClient/FTPClient.iml" filepath="$PROJECT_DIR$/.idea/modules/FTPClient/FTPClient.iml" group="FTPClient" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FTPClient/FTPClient_main.iml" filepath="$PROJECT_DIR$/.idea/modules/FTPClient/FTPClient_main.iml" group="FTPClient" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FTPClient/FTPClient_test.iml" filepath="$PROJECT_DIR$/.idea/modules/FTPClient/FTPClient_test.iml" group="FTPClient" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FTPServer/FTPServer.iml" filepath="$PROJECT_DIR$/.idea/modules/FTPServer/FTPServer.iml" group="FTPServer" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FTPServer/FTPServer_main.iml" filepath="$PROJECT_DIR$/.idea/modules/FTPServer/FTPServer_main.iml" group="FTPServer" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FTPServer/FTPServer_test.iml" filepath="$PROJECT_DIR$/.idea/modules/FTPServer/FTPServer_test.iml" group="FTPServer" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/SimpleFTP.iml" filepath="$PROJECT_DIR$/.idea/modules/SimpleFTP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/SimpleFTP_main.iml" filepath="$PROJECT_DIR$/.idea/modules/SimpleFTP_main.iml" group="SimpleFTP" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/SimpleFTP_test.iml" filepath="$PROJECT_DIR$/.idea/modules/SimpleFTP_test.iml" group="SimpleFTP" />
+    </modules>
+  </component>
+</project>

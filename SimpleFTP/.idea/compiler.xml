@@ -2,8 +2,14 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
+      <module name="FTPClient_main" target="1.8" />
+      <module name="FTPClient_test" target="1.8" />
+      <module name="FTPServer_main" target="1.8" />
+      <module name="FTPServer_test" target="1.8" />
       <module name="Server_main" target="1.8" />
       <module name="Server_test" target="1.8" />
+      <module name="SimpleFTP_main" target="1.8" />
+      <module name="SimpleFTP_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
