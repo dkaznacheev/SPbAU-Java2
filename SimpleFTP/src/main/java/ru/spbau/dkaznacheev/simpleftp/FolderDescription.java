@@ -13,22 +13,30 @@ public class FolderDescription {
     /**
      * Class describing one file.
      */
-    private static class FileDescription {
+    public static class FileDescription {
 
         /**
          * Filename.
          */
-        public String name;
+        public final String name;
 
         /**
          * Whether a file is a directory or not.
          */
-        public boolean isDir;
+        public final boolean isDir;
 
         public FileDescription(String name, boolean isDir) {
             this.name = name;
             this.isDir = isDir;
         }
+    }
+
+    public FileDescription[] getFiles() {
+        return files;
+    }
+
+    public int getSize() {
+        return size;
     }
 
     /**
