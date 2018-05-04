@@ -14,6 +14,11 @@ import java.util.*;
 public class Controller {
 
     /**
+     * Game model for the game.
+     */
+    private Game game;
+
+    /**
      * Whether a game is waiting now.
      */
     private boolean sleeping = false;
@@ -47,6 +52,7 @@ public class Controller {
         selectedButton = null;
         sleeping = false;
         foundPairs = 0;
+        game = new Game(fieldSize);
     }
 
     /**
@@ -65,8 +71,8 @@ public class Controller {
         } else  {
             button.setDisable(true);
             if (selectedButton.number == button.number) {
-                foundPairs++;
-                if (gameWon()) {
+                game.addPair();
+                if (game.isWon()) {
                     showGameWon();
                     Platform.exit();
                 }
@@ -82,7 +88,7 @@ public class Controller {
      * @param size size of field
      */
     private void constructField(int size) {
-        List<Integer> values = generateRandomList(size);
+        List<Integer> values = Util.generateRandomList(size);
         Iterator<Integer> iterator = values.iterator();
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -107,14 +113,6 @@ public class Controller {
         alert.setHeaderText(null);
         alert.setContentText("Congratulations!");
         alert.showAndWait();
-    }
-
-    /**
-     * Check if the game is over.
-     * @return if it is over
-     */
-    private boolean gameWon() {
-        return foundPairs == fieldSize * fieldSize / 2;
     }
 
     /**
@@ -144,21 +142,6 @@ public class Controller {
             button2.setText("");
         });
         new Thread(sleeper).start();
-    }
-
-    /**
-     * Generates random list of size n^2 with pairs of integers from 0 to n^2/2.
-     * @param n root of size
-     * @return generated list
-     */
-    private List<Integer> generateRandomList(int n) {
-        int size = n * n;
-        ArrayList<Integer> list = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            list.add(i / 2);
-        }
-        Collections.shuffle(list);
-        return list;
     }
 
     /**
