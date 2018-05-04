@@ -4,3 +4,6 @@ sudo: false
 
 notifications:
   email: false
+env:
+  - TEST_DIR=Pairs
+script: cd $TEST_DIR && ./gradlew clean check
