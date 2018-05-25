@@ -18,12 +18,11 @@ public class LazyFactory {
         return new Lazy<T>() {
             private Supplier<T> lazySupplier = supplier;
             private T result;
-            private boolean counted = false;
             @Override
             public T get() {
-                if (!counted) {
-                    counted = true;
+                if (lazySupplier != null) {
                     result = lazySupplier.get();
+                    lazySupplier = null;
                 }
                 return result;
             }

@@ -21,7 +21,7 @@ public class LazyImpl <T> implements Lazy<T> {
     /**
      * The supplier that generates the value of Lazy.
      */
-    private final Supplier<T> supplier;
+    private Supplier<T> supplier;
 
     @SuppressWarnings("unchecked")
     public LazyImpl(Supplier<T> supplier) {
@@ -37,9 +37,10 @@ public class LazyImpl <T> implements Lazy<T> {
     @Override
     public T get() {
         if (value == notInitialized) {
-            synchronized (supplier) {
+            synchronized (notInitialized) {
                 if (value == notInitialized) {
                     value = supplier.get();
+                    supplier = null;
                 }
             }
         }

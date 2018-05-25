@@ -2,11 +2,11 @@ package ru.spbau.dkaznacheev.lazy;
 
 import org.junit.Test;
 
-import javax.jws.Oneway;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class LazyTest {
@@ -37,10 +37,7 @@ public class LazyTest {
 
         @Override
         public Boolean get() {
-            if (!isLong)
-                return getShort();
-            else
-                return getLong();
+            return isLong ? getLong() : getShort();
         }
     }
 
@@ -52,6 +49,15 @@ public class LazyTest {
             lazy.get();
         }
         assertTrue(job.calledOnce());
+    }
+
+    @Test
+    public void lazyReturnsSameTest() {
+        Object object = new Object();
+        Lazy<Object> lazy = LazyFactory.createSingleThreadLazy(() -> object);
+        assertEquals(object, lazy.get());
+        assertEquals(object, lazy.get());
+        assertEquals(object, lazy.get());
     }
 
     @Test
