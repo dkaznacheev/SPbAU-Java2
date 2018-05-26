@@ -78,7 +78,7 @@ public class Model {
      * @param column column of a turn
      * @return winning player
      */
-    private PlayerType processTurn(int row, int column) {
+    public PlayerType makeTurn(int row, int column) {
         if (gameWon) {
             return null;
         }
@@ -155,9 +155,5 @@ public class Model {
         }
 
         return PlayerType.DRAW;
-    }
-
-    public PlayerType makeTurn(int row, int column) {
-        return processTurn(row, column);
     }
 }
