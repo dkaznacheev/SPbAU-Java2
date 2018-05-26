@@ -2,8 +2,15 @@ package ru.spbau.dkaznacheev.myjunit;
 
 
 public class TestExecutionResult {
-    private String failMessage;
-    private String ignoreMessage;
+
+    private final String failMessage;
+
+    private final String ignoreMessage;
+
+    private TestExecutionResult(String failMessage, String ignoreMessage) {
+        this.failMessage = failMessage;
+        this.ignoreMessage = ignoreMessage;
+    }
 
     @Override
     public String toString() {
@@ -29,18 +36,14 @@ public class TestExecutionResult {
     }
 
     public static TestExecutionResult passed() {
-        return new TestExecutionResult();
+        return new TestExecutionResult(null, null);
     }
 
     public static TestExecutionResult ignored(String ignoreMessage) {
-        TestExecutionResult result = new TestExecutionResult();
-        result.ignoreMessage = ignoreMessage;
-        return result;
+        return new TestExecutionResult(null, ignoreMessage);
     }
 
     public static TestExecutionResult failed(String failMessage) {
-        TestExecutionResult result = new TestExecutionResult();
-        result.failMessage = failMessage;
-        return result;
+        return new TestExecutionResult(failMessage, null);
     }
 }

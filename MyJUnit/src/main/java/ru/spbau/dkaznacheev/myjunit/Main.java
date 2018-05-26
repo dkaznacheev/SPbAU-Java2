@@ -40,11 +40,11 @@ public class Main {
     private static void printInfo(TestExecutionInfo info) {
         System.out.println(
                 "Test "
-                + info.name
+                + info.getName()
                 + ": "
-                + info.result.toString()
+                + info.getResult().toString()
                 + ", time: "
-                + info.time + "ms"
+                + info.getTime() + "ms"
         );
     }
 }

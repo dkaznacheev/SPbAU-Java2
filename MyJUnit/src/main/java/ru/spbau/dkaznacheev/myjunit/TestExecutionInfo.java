@@ -2,11 +2,23 @@ package ru.spbau.dkaznacheev.myjunit;
 
 public class TestExecutionInfo {
 
-    public final long time;
+    public long getTime() {
+        return time;
+    }
 
-    public final TestExecutionResult result;
+    public TestExecutionResult getResult() {
+        return result;
+    }
 
-    public final String name;
+    public String getName() {
+        return name;
+    }
+
+    private final long time;
+
+    private final TestExecutionResult result;
+
+    private final String name;
 
     public TestExecutionInfo(long time, TestExecutionResult result, String name) {
         this.time = time;

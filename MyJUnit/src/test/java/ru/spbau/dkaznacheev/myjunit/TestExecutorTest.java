@@ -8,7 +8,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class TestExecutorTest {
-    public TestExecutor executor;
+    private TestExecutor executor;
 
     @Before
     public void init() {
@@ -22,8 +22,8 @@ public class TestExecutorTest {
 
         boolean checked = false;
         for (TestExecutionInfo info : results) {
-            if (info.name.equals("test1")) {
-                assertTrue(info.result.isPassed());
+            if (info.getName().equals("test1")) {
+                assertTrue(info.getResult().isPassed());
                 checked = true;
             }
         }
@@ -37,9 +37,9 @@ public class TestExecutorTest {
 
         boolean checked = false;
         for (TestExecutionInfo info : results) {
-            if (info.name.equals("test2")) {
-                assertTrue(info.result.isIgnored());
-                assertEquals("ignored, reason: Ignore", info.result.toString());
+            if (info.getName().equals("test2")) {
+                assertTrue(info.getResult().isIgnored());
+                assertEquals("ignored, reason: Ignore", info.getResult().toString());
                 checked = true;
             }
         }
@@ -53,9 +53,9 @@ public class TestExecutorTest {
 
         boolean checked = false;
         for (TestExecutionInfo info : results) {
-            if (info.name.equals("test3")) {
-                System.out.println(info.result.toString());
-                assertTrue(info.result.isFailed());
+            if (info.getName().equals("test3")) {
+                System.out.println(info.getResult().toString());
+                assertTrue(info.getResult().isFailed());
                 checked = true;
             }
         }
@@ -68,8 +68,8 @@ public class TestExecutorTest {
         List<TestExecutionInfo> results = executor.executeTests();
         boolean checked = false;
         for (TestExecutionInfo info : results) {
-            if (info.name.equals("test4")) {
-                assertTrue(info.result.isPassed());
+            if (info.getName().equals("test4")) {
+                assertTrue(info.getResult().isPassed());
                 checked = true;
             }
         }
