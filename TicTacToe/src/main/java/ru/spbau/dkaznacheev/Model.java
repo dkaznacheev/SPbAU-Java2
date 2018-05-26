@@ -13,7 +13,7 @@ public class Model {
     /**
      * Game board.
      */
-    private BoardState[][] board;
+    private Board board;
 
     /**
      * Type of the game.
@@ -47,7 +47,7 @@ public class Model {
      * Returns board.
      * @return board
      */
-    public BoardState[][] getBoard() {
+    public Board getBoard() {
         return board;
     }
 
@@ -62,10 +62,8 @@ public class Model {
     public void reset() {
         currentPlayer = PlayerType.PLAYER_X;
         gameWon = false;
-        this.board = new BoardState[BOARD_SIZE][BOARD_SIZE];
-        for (int i = 0; i < BOARD_SIZE; i++)
-            for (int j = 0; j < BOARD_SIZE; j++)
-                board[i][j] = BoardState.STATE_NONE;
+        this.board = new Board(BOARD_SIZE);
+        
         if (gameType == GameType.BOT_EASY) {
             bot = new EasyBot();
         }
@@ -80,35 +78,34 @@ public class Model {
      * @param column column of a turn
      * @return winning player
      */
-    public PlayerType processTurn(int row, int column) {
+    private PlayerType processTurn(int row, int column) {
         if (gameWon) {
             return null;
         }
-        if (board[row][column] != BoardState.STATE_NONE) {
+        if (board.get(row, column) != BoardState.STATE_NONE) {
             return null;
         }
         PlayerType winner;
         if (gameType == GameType.MULTIPLAYER) {
             if (currentPlayer == PlayerType.PLAYER_X) {
-                board[row][column] = BoardState.STATE_X;
+                board.set(row, column, BoardState.STATE_X);
                 currentPlayer = PlayerType.PLAYER_O;
             } else {
-                board[row][column] = BoardState.STATE_O;
+                board.set(row, column, BoardState.STATE_O);
                 currentPlayer = PlayerType.PLAYER_X;
             }
         } else {
-            board[row][column] = BoardState.STATE_X;
+            board.set(row, column, BoardState.STATE_X);
             winner = checkWinner();
             if (winner != PlayerType.NOBODY) {
                 gameWon = true;
                 return winner;
             }
             Point turn = bot.makeTurn(board);
-            board[turn.row][turn.column] = BoardState.STATE_O;
+            board.set(turn.row, turn.column, BoardState.STATE_O);
         }
         winner = checkWinner();
         if (winner != PlayerType.NOBODY) {
-
             gameWon = true;
         }
         return winner;
@@ -120,43 +117,47 @@ public class Model {
      */
     private PlayerType checkWinner() {
         for (int i = 0; i < BOARD_SIZE; i++) {
-            if (board[i][0] == board[i][1]
-                    && board[i][1] == board[i][2]) {
-                if (board[i][0] == BoardState.STATE_X)
+            if (board.get(i, 0) == board.get(i, 1)
+                    && board.get(i, 1) == board.get(i, 2)) {
+                if (board.get(i, 0) == BoardState.STATE_X)
                     return PlayerType.PLAYER_X;
-                if (board[i][0] == BoardState.STATE_O)
+                if (board.get(i, 0) == BoardState.STATE_O)
                     return PlayerType.PLAYER_O;
             }
-            if (board[0][i] == board[1][i]
-                    && board[1][i] == board[2][i]) {
-                if (board[0][i] == BoardState.STATE_X)
+            if (board.get(0, i) == board.get(1, i)
+                    && board.get(1, i) == board.get(2, i)) {
+                if (board.get(0, i) == BoardState.STATE_X)
                     return PlayerType.PLAYER_X;
-                if (board[0][i] == BoardState.STATE_O)
+                if (board.get(0, i) == BoardState.STATE_O)
                     return PlayerType.PLAYER_O;
             }
         }
-        if (board[0][0] == board[1][1]
-                && board[1][1] == board[2][2]) {
-            if (board[0][0] == BoardState.STATE_X)
+        if (board.get(0, 0) == board.get(1, 1)
+                && board.get(1, 1) == board.get(2, 2)) {
+            if (board.get(0, 0) == BoardState.STATE_X)
                 return PlayerType.PLAYER_X;
-            if (board[0][0] == BoardState.STATE_O)
+            if (board.get(0, 0) == BoardState.STATE_O)
                 return PlayerType.PLAYER_O;
         }
-        if (board[0][2] == board[1][1]
-                && board[1][1] == board[2][0]) {
-            if (board[0][2] == BoardState.STATE_X)
+        if (board.get(0, 2) == board.get(1, 1)
+                && board.get(1, 1) == board.get(2, 0)) {
+            if (board.get(0, 2) == BoardState.STATE_X)
                 return PlayerType.PLAYER_X;
-            if (board[0][2] == BoardState.STATE_O)
+            if (board.get(0, 2) == BoardState.STATE_O)
                 return PlayerType.PLAYER_O;
         }
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
-                if (board[i][j] == BoardState.STATE_NONE) {
+                if (board.get(i, j) == BoardState.STATE_NONE) {
                     return PlayerType.NOBODY;
                 }
             }
         }
 
         return PlayerType.DRAW;
+    }
+
+    public PlayerType makeTurn(int row, int column) {
+        return processTurn(row, column);
     }
 }

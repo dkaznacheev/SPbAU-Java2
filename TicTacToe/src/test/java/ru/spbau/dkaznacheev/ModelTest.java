@@ -2,7 +2,8 @@ package ru.spbau.dkaznacheev;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
 public class ModelTest {
 
     @Test
@@ -21,7 +22,7 @@ public class ModelTest {
         Model model = new Model(GameType.MULTIPLAYER);
         model.processTurn(1,1);
         model.processTurn(1,1);
-        assertEquals(BoardState.STATE_X, model.getBoard()[1][1]);
+        assertEquals(BoardState.STATE_X, model.getBoard().get(1,1 ));
         assertEquals(PlayerType.PLAYER_O, model.getCurrentPlayer());
     }
 
@@ -56,6 +57,6 @@ public class ModelTest {
         Model model = new Model(GameType.BOT_HARD);
         model.processTurn(1, 1);
         model.processTurn(1, 2);
-        assertEquals(BoardState.STATE_O, model.getBoard()[1][0]);
+        assertEquals(BoardState.STATE_O, model.getBoard().get(1, 0));
     }
 }

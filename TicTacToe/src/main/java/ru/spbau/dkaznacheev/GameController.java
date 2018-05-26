@@ -79,7 +79,7 @@ public class GameController {
      * @param column column of buttons
      */
     public void processTurn(int row, int column) {
-        PlayerType winner = model.processTurn(row, column);
+        PlayerType winner = model.makeTurn(row, column);
         if (winner == null)
             return;
         if (winner != PlayerType.NOBODY) {
@@ -103,12 +103,12 @@ public class GameController {
      * Updates the board buttons.
      */
     private void updateBoard() {
-        BoardState[][] board = model.getBoard();
-        for (int i = 0; i < BOARD_SIZE; i++) 
+        Board board = model.getBoard();
+        for (int i = 0; i < BOARD_SIZE; i++)
             for (int j = 0; j < BOARD_SIZE; j++) {
-                if (board[i][j] == BoardState.STATE_X) {
+                if (board.get(i, j) == BoardState.STATE_X) {
                     buttons[i][j].setText("X");
-                } else if (board[i][j] == BoardState.STATE_O) {
+                } else if (board.get(i, j) == BoardState.STATE_O) {
                     buttons[i][j].setText("O");
                 } else {
                     buttons[i][j].setText("");

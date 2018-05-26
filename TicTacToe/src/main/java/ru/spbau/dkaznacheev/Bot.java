@@ -10,5 +10,5 @@ public interface Bot {
      * @param board current board
      * @return point where the turn is made
      */
-    Point makeTurn(BoardState[][] board);
+    Point makeTurn(Board board);
 }

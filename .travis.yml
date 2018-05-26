@@ -1,0 +1,9 @@
+language: java
+
+sudo: false
+
+notifications:
+  email: false
+env:
+  - TEST_DIR=TicTacToe
+script: cd $TEST_DIR && ./gradlew clean check
