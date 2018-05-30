@@ -3,6 +3,8 @@ package ru.spbau.dkaznacheev.threadpool;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import static org.junit.Assert.*;
@@ -65,11 +67,7 @@ public class ThreadPoolTest {
     public void threadPoolShutdownTest() throws Exception {
         ThreadPool pool = new ThreadPoolImpl(4);
         pool.addTask(() -> {
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-            }
-            throw new RuntimeException();
+            return true;
         });
         pool.shutdown();
     }
@@ -96,34 +94,34 @@ public class ThreadPoolTest {
         assertEquals(8, (int)future2.get());
     }
 
-    private class Counter {
-        private int value = 0;
 
-        private int getValue() {
-            return value;
-        }
-
-        private void increment() {
-            value++;
-        }
-    }
 
     @Test
     public void threadPoolHasNThreads() throws Exception {
         ThreadPool pool = new ThreadPoolImpl(5);
-        Counter counter = new Counter();
+        Set<String> threads = new HashSet<>();
         for (int i = 0; i < 100; i++) {
             pool.addTask(() -> {
-                synchronized (counter) {
-                    counter.increment();
+                synchronized (threads) {
+                    threads.add(Thread.currentThread().getName());
                 }
-                while (!Thread.interrupted()){
+                while (true) {
+
                 }
-                return true;
             });
         }
-        Thread.sleep(100);
-        pool.shutdown();
-        assertEquals(5, counter.getValue());
+        Thread.sleep(1000);
+        assertEquals(5, threads.size());
+    }
+
+    @Test
+    public void nonBlockingThenApply() throws Exception {
+        ThreadPool pool = new ThreadPoolImpl(5);
+        LightFuture<Boolean> future = pool.addTask(() -> {
+            while (true) {
+
+            }
+        });
+        future.thenApply((result) -> !result);
     }
 }

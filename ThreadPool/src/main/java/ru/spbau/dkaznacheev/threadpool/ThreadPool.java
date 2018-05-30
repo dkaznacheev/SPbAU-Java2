@@ -17,5 +17,5 @@ public interface ThreadPool {
     /**
      * Shuts down all of its current workers.
      */
-    void shutdown();
+    void shutdown() throws InterruptedException;
 }

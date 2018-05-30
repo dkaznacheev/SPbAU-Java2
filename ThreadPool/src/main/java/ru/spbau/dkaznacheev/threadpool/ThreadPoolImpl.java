@@ -3,6 +3,7 @@ package ru.spbau.dkaznacheev.threadpool;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -23,6 +24,73 @@ public class ThreadPoolImpl implements ThreadPool {
      */
     private final Thread[] workers;
 
+    public ThreadPoolImpl(int poolSize) {
+        workers = new Thread[poolSize];
+
+        for (int i = 0; i < poolSize; i++) {
+            workers[i] = new Thread(worker);
+            workers[i].start();
+        }
+    }
+
+    /**
+     * Worker thread routine for ThreadPool.
+     */
+    private Runnable worker = () -> {
+        LightFutureImpl<?> future;
+        try {
+            while (!Thread.currentThread().isInterrupted()) {
+                synchronized (queue) {
+                    while (queue.isEmpty()) {
+                        queue.wait();
+                    }
+                    future = queue.poll();
+                }
+
+                synchronized (future) {
+                    future.compute();
+                    future.notify();
+                }
+            }
+        } catch (InterruptedException e) {
+        }
+
+    };
+
+    /**
+     * Adds a task to the pool, returning a LightFuture object.
+     * @param supplier supplier for the computation
+     * @param <T> type of the result
+     * @return LightFuture object that will contain the result of computation
+     */
+    @Override
+    public <T> LightFuture<T> addTask(Supplier<T> supplier) {
+        LightFutureImpl<T> future = new LightFutureImpl<T>(supplier);
+        synchronized (queue) {
+            queue.add(future);
+            queue.notify();
+        }
+        return future;
+    }
+
+    /**
+     * Shuts down all of its current workers.
+     */
+    @Override
+    public void shutdown() throws InterruptedException {
+        for (Thread thread: workers) {
+            thread.interrupt();
+        }
+        synchronized (queue) {
+            while (!queue.isEmpty()) {
+                queue.remove().caughtException = true;
+            }
+        }
+        for (Thread thread : workers) {
+            thread.join();
+        }
+    }
+
     /**
      * An implementation of LightFuture interface for
      * @param <T>
@@ -38,6 +106,8 @@ public class ThreadPoolImpl implements ThreadPool {
          * The status of the computation.
          */
         private volatile boolean isReady = false;
+
+        private List<LightFutureImpl<?>> thenApplied = new LinkedList<>();
 
         /**
          * The result of the computation.
@@ -90,11 +160,12 @@ public class ThreadPoolImpl implements ThreadPool {
         private void compute() {
             try {
                 result = supplier.get();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 caughtException = true;
             }
             isReady = true;
-            synchronized (this) {
+            synchronized (queue) {
+                queue.addAll(thenApplied);
                 notifyAll();
             }
         }
@@ -107,58 +178,18 @@ public class ThreadPoolImpl implements ThreadPool {
          */
         @Override
         public <U> LightFuture<U> thenApply(Function<T, U> function) {
-            return addTask(() -> function.apply(get()));
-        }
-    }
-
-    public ThreadPoolImpl(int poolSize) {
-        workers = new Thread[poolSize];
-
-        Runnable workerRunnable = () -> {
-            LightFutureImpl<?> future;
-            try {
-                while (!Thread.interrupted()) {
-                    synchronized (queue) {
-                        while (queue.isEmpty()) {
-                            queue.wait();
-                        }
-                        future = queue.poll();
-                    }
-                    future.compute();
+            synchronized (this) {
+                if (caughtException) {
+                    throw new LightFutureException();
                 }
-            } catch (InterruptedException e) {
+
+                if (!isReady) {
+                    LightFutureImpl<U> future = new LightFutureImpl<>(() -> function.apply(get()));
+                    thenApplied.add(future);
+                    return future;
+                }
+                return addTask(()->function.apply(result));
             }
-        };
-
-        for (int i = 0; i < poolSize; i++) {
-            workers[i] = new Thread(workerRunnable);
-            workers[i].start();
-        }
-    }
-
-    /**
-     * Adds a task to the pool, returning a LightFuture object.
-     * @param supplier supplier for the computation
-     * @param <T> type of the result
-     * @return LightFuture object that will contain the result of computation
-     */
-    @Override
-    public <T> LightFuture<T> addTask(Supplier<T> supplier) {
-        LightFutureImpl<T> future = new LightFutureImpl<T>(supplier);
-        synchronized (queue) {
-            queue.add(future);
-            queue.notify();
-        }
-        return future;
-    }
-
-    /**
-     * Shuts down all of its current workers.
-     */
-    @Override
-    public void shutdown() {
-        for (Thread thread: workers) {
-            thread.interrupt();
         }
     }
 }
