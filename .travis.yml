@@ -4,3 +4,7 @@ sudo: false
 
 notifications:
   email: false
+
+env:
+  - TEST_DIR=ThreadPool
+script: cd $TEST_DIR && ./gradlew clean check
