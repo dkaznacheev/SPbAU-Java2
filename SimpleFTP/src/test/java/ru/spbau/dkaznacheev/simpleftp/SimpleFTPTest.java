@@ -68,58 +68,47 @@ public class SimpleFTPTest {
 
     @Test
     public void emptyFolderDescriptionClientTest() throws Throwable {
-        new Thread(ServerMockup::returnEmptyDescription).start();
+        Thread thread = new Thread(ServerMockup::returnEmptyDescription);
+        thread.start();
         Client client = new Client( new Socket("127.0.0.1", 8080));
         FolderDescription description = client.describeFolderQuery("");
         assertEquals(0, description.getSize());
         assertNull(description.getFiles());
+        thread.join();
     }
 
     @Test
     public void correctFolderDescriptionClientTest() throws Throwable {
-        new Thread(ServerMockup::returnCorrectDescription).start();
+        Thread thread = new Thread(ServerMockup::returnCorrectDescription);
+        thread.start();
         Client client = new Client( new Socket("127.0.0.1", 8080));
-        FolderDescription description = client.describeFolderQuery("src");
+        FolderDescription description = client.describeFolderQuery("");
         assertEquals(1, description.getSize());
         assertEquals(1, description.getFiles().length);
         assertEquals("file", description.getFiles()[0].getName());
         assertEquals(false, description.getFiles()[0].isDir());
+        thread.join();
     }
 
     @Test
     public void correctFileTest() throws Throwable {
-        new Thread(ServerMockup::sendFile).start();
+        Thread thread = new Thread(ServerMockup::sendFile);
+        thread.start();
         Client client = new Client( new Socket("127.0.0.1", 8080));
         client.getFileQuery("file");
         byte[] result = Files.readAllBytes(Paths.get("file"));
         Files.deleteIfExists(Paths.get("file"));
         assertEquals(ServerMockup.FILE_CONTENT[0], result[0]);
         assertEquals(ServerMockup.FILE_CONTENT[1], result[1]);
+        thread.join();
     }
 
     @Test
-    public void serverFolderDescriptionAndFileSendTest() throws Throwable {
-        Thread thread = new Thread(() -> {
-            try {
-                Server server = new Server(new ServerSocket(8080));
-                server.start();
-            } catch (IOException e) {}
-        });
-        thread.start();
-        Client client = new Client(new Socket("127.0.0.1", 8080));
-        FolderDescription expected = FolderDescription.describeFolder("src");
-        FolderDescription description = client.describeFolderQuery("src");
-        assertEquals(expected.getSize(), description.getSize());
-        assertEquals(expected.getFiles()[0].getName(), description.getFiles()[0].getName());
-        assertEquals(expected.getFiles()[0].isDir(), description.getFiles()[0].isDir());
-        assertEquals(expected.getFiles()[1].getName(), description.getFiles()[1].getName());
-        assertEquals(expected.getFiles()[1].isDir(), description.getFiles()[1].isDir());
-
-        client.getFileQuery("src/test/resources/testFile");
-        String result = Files.lines(Paths.get("testFile")).findFirst().orElse("").trim();
-        String expectedFile = Files.lines(Paths.get("src/test/resources/testFile")).findFirst().orElse("").trim();
-        assertEquals(expectedFile, result);
-
-        thread.interrupt();
+    public void correctFolderDescription() throws Throwable {
+        FolderDescription description = FolderDescription.describeFolder("src/test/resources");
+        assertEquals(1, description.getSize());
+        assertEquals(1, description.getFiles().length);
+        assertEquals("testFile", description.getFiles()[0].getName());
+        assertEquals(false, description.getFiles()[0].isDir());
     }
 }
