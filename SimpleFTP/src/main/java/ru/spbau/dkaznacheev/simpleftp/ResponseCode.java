@@ -10,6 +10,11 @@ public enum ResponseCode {
     CLOSE_CONNECTION,
 
     /**
+     * If a connection is opened.
+     */
+    OPEN_CONNECTION,
+
+    /**
      * If a client sent an invalid command.
      */
     INVALID_COMMAND,

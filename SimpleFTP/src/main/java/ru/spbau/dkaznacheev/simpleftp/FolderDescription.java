@@ -11,49 +11,26 @@ import java.io.IOException;
 public class FolderDescription {
 
     /**
-     * Class describing one file.
-     */
-    private static class FileDescription {
-
-        /**
-         * Filename.
-         */
-        public String name;
-
-        /**
-         * Whether a file is a directory or not.
-         */
-        public boolean isDir;
-
-        public FileDescription(String name, boolean isDir) {
-            this.name = name;
-            this.isDir = isDir;
-        }
-    }
-
-    /**
      * Size of the folder.
      */
-    private int size;
+    private final int size;
 
     /**
      * Description of folder's contents.
      */
-    private FileDescription[] files;
+    private final FileDescription[] files;
 
-    /**
-     * Writes FolderDescription to DataOutputStream.
-     * @param out stream to write to
-     */
-    public void write(DataOutputStream out) throws IOException {
-        out.writeInt(size);
-        if (size == 0) {
-            return;
-        }
-        for (FileDescription description : files) {
-            out.writeUTF(description.name);
-            out.writeBoolean(description.isDir);
-        }
+    public FolderDescription(int size, FileDescription[] files) {
+        this.size = size;
+        this.files = files;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public FileDescription[] getFiles() {
+        return files;
     }
 
     /**
@@ -76,27 +53,6 @@ public class FolderDescription {
     }
 
     /**
-     * Reads FolderDescription from InputStream.
-     * @param in input stream
-     * @return read FolderDescription
-     */
-    public static FolderDescription read(DataInputStream in) throws IOException {
-        FolderDescription description = new FolderDescription();
-        description.size = in.readInt();
-        if (description.size == 0) {
-            return description;
-        }
-        description.files = new FileDescription[description.size];
-
-        for (int i = 0; i < description.size; i++)  {
-            String name = in.readUTF();
-            boolean isDir = in.readBoolean();
-            description.files[i] = new FileDescription(name, isDir);
-        }
-        return description;
-    }
-
-    /**
      * Returns a FolderDescription from path to folder.
      * If it is the path of non-folder file, returns a FolderDescription with size = 0.
      * @param path path to file/folder
@@ -104,21 +60,48 @@ public class FolderDescription {
      */
     public static FolderDescription describeFolder(String path) {
         File root = new File(path);
-        FolderDescription result = new FolderDescription();
 
         File[] contents = root.listFiles();
         if (contents == null) {
-            result.size = 0;
-            return result;
+            return new FolderDescription(0, null);
         }
 
-        result.files = new FileDescription[contents.length];
-        result.size = contents.length;
-        for (int i = 0; i < contents.length; i++) {
+        FileDescription[] files = new FileDescription[contents.length];
+        int size = contents.length;
+        for (int i = 0; i < size; i++) {
             String name = contents[i].getName();
             boolean isDir = contents[i].isDirectory();
-            result.files[i] = new FileDescription(name, isDir);
+            files[i] = new FileDescription(name, isDir);
         }
-        return result;
+        return new FolderDescription(size, files);
+    }
+
+    /**
+     * Class describing one file.
+     */
+    public static class FileDescription {
+
+        /**
+         * Filename.
+         */
+        private final String name;
+
+        /**
+         * Whether a file is a directory or not.
+         */
+        private final boolean isDir;
+
+        public String getName() {
+            return name;
+        }
+
+        public boolean isDir() {
+            return isDir;
+        }
+
+        public FileDescription(String name, boolean isDir) {
+            this.name = name;
+            this.isDir = isDir;
+        }
     }
 }

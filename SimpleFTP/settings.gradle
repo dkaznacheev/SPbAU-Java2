@@ -1,4 +1,2 @@
 rootProject.name = 'SimpleFTP'
-include 'FTPServer'
-include 'FTPClient'
 
